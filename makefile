@@ -2,16 +2,15 @@ NAME			= fdf
 CC				= gcc
 FLAGS			= -Wall -Werror -Wextra
 SRC_DIR 		= ./srcs/
-INCLUDES 		= ./includes
-
-SRCS			= $(SRC_DIR)main.c
+INCLUDES 		= -I./libft/includes -I./includes -I./minilibx_macos
+LIBRARIES		= -L libft/ -lft -L minilibx_macos/ -lmlx -framework OpenGL -framework AppKit -g
+SRCS			= $(SRC_DIR)main.c $(SRC_DIR)graphic_main.c
 OBJS			= $(SRCS:.c=.o)
 
 all:		$(NAME)
 
 $(NAME): $(SRCS)		
-		@$(CC) $(FLAGS) -I libft/includes -I minilibx -o $(OBJS) -c $(SRCS)
-		@$(CC) -o fdf $(OBJS) -I libft/includes -L libft/ -lft -I minilibx -L minilibx/ -lmlx -framework OpenGL -framework AppKit -g
+		@$(CC) $(FLAGS) $(INCLUDES) $(SRCS) $(LIBRARIES) -o $(NAME)
 
 clean:
 		@/bin/rm -f $(OBJS)
