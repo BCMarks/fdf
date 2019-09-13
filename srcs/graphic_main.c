@@ -6,114 +6,75 @@
 /*   By: bmarks <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/11 11:06:26 by bmarks            #+#    #+#             */
-/*   Updated: 2019/09/11 16:18:50 by bmarks           ###   ########.fr       */
+/*   Updated: 2019/09/13 15:15:42 by bmarks           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/fdf.h"
+#include <stdio.h>
 
-static int	col_index(int i)
+static int	col_pick(t_data data, int i, int j)
 {
-	static int	col = -1;
-	static int	col2;
+	int	c;
 
-	if (i)
-	{
-		col += 1;
-		if (col == 8)
-			col = 0;
-		return (col);
-	}
+	if (ft_atoi(data.mesh[i][j]) <
+			data.m_min_z + (data.m_max_z - data.m_min_z) / 3)
+		c = BROWN;
+	else if (ft_atoi(data.mesh[i][j]) <
+			data.m_min_z + 2 * (data.m_max_z - data.m_min_z) / 3)
+		c = RED;
+	else if (ft_atoi(data.mesh[i][j]) <
+			data.m_min_z + 3 * (data.m_max_z - data.m_min_z) / 3)
+		c = ORANGE;
 	else
-	{
-		col2 += 1;
-		if (col2 == 8)
-			col2 = 0;
-		return (col2);
-	}
+		c = GOLD;
+	return (c);
 }
 
-static void	disp_mesh(void *p[], char ***mesh, int size)
+static void	disp_mesh_2d(void *p[], t_data data)
 {
 	int			i;
 	int			j;
-	const int	c[] = {RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET};
+	int			k[2];
 
 	mlx_clear_window(p[0], p[1]);
 	i = 0;
-	while (i < size)
+	while (i < data.m_y)
 	{
 		j = 0;
-		while (mesh[i][j] != NULL)
+		while (data.mesh[i][j] != NULL)
 		{
-			if (ft_atoi(mesh[i][j]) < 5)
-				mlx_string_put(p[0], p[1], 100 * j, 100 * i, c[col_index(0)], mesh[i][j]);
-			else
-				mlx_string_put(p[0], p[1], 100 * j, 100 * i, c[col_index(1)], mesh[i][j]);
+			k[0] = -1;
+			while (++k[0] < 10)
+			{
+				k[1] = -1;
+				while (++k[1] < 10)
+					mlx_pixel_put(p[0], p[1], 10 * j + k[0], 10 * i + k[1], col_pick(data, i, j));
+			}
 			j++;
 		}
 		i++;
 	}	
 }
 
-static void	change_mesh(int key, void *p[], char ***mesh, int size)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-
-	i = 0;
-	if (key == KEY_UP)
-	{
-		while (i < size)
-		{
-			j = 0;
-			while (mesh[i][j] != NULL)
-			{
-				tmp = mesh[i][j];
-				mesh[i][j] = ft_itoa(ft_atoi(tmp) + 1);
-				free(tmp);
-				j++;
-			}
-			i++;
-		}
-	}
-	else
-	{
-		while (i < size)
-		{
-			j = 0;
-			while (mesh[i][j] != NULL)
-			{
-				tmp = mesh[i][j];
-				mesh[i][j] = ft_itoa(ft_atoi(tmp) - 1);
-				free(tmp);
-				j++;
-			}
-			i++;
-		}
-	}
-	disp_mesh(p, mesh, size);
-}
-
 static int	key_input(int key, void *p[])
 {
 	key == KEY_ESC ? (exit(0)) : NULL;
-	key == KEY_SPACE ? (disp_mesh(p, p[2], *(int *)p[3])) : NULL;
-	key == KEY_UP || key == KEY_DOWN ? (change_mesh(key, p, p[2], *(int *)p[3])) : NULL;
+	key == KEY_SPACE ? (disp_mesh_2d(p, *(t_data *)p[2])) : NULL;
 	return (0);
 }
 
-void		graphic_main(char ***mesh, int size)
+void		graphic_main(t_data data)
 {
 	void	*p[4];
 
+	printf("z_max = %d z_min = %d\n", data.m_max_z, data.m_min_z);	
+	printf("mx = %d my = %d\n", data.m_x, data.m_y);
+	printf("wx = %d wy = %d\n", 10 * data.w_x, 10 * data.w_y);
 	p[0] = mlx_init();
-	p[1] = mlx_new_window(p[0], 2560, 1400, "fdf");
-
-	p[2] = mesh;
-	p[3] = &size;
-	disp_mesh(p, mesh, size);
+	p[1] = mlx_new_window(p[0], data.w_x, data.w_y, ft_strjoin("fdf - ", data.file));
+	p[2] = &data;
+	disp_mesh_2d(p, data);
 	mlx_key_hook(p[1], &key_input, p);
 	mlx_loop(p[0]);
 }

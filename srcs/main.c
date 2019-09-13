@@ -6,7 +6,7 @@
 /*   By: bmarks <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 15:42:59 by bmarks            #+#    #+#             */
-/*   Updated: 2019/09/11 16:11:50 by bmarks           ###   ########.fr       */
+/*   Updated: 2019/09/13 14:58:53 by bmarks           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	val_mesh(char ***mesh, int size)
 			{
 				free(tmp);
 				free_mesh(mesh, size);
-				ERROR;
+				ERR_BFILE;
 			}
 			else
 				free(tmp);
@@ -58,7 +58,38 @@ static void	val_mesh(char ***mesh, int size)
 	}
 }
 
-int	main(int argc, char **argv)
+static void	fill_data(t_data *data)
+{
+	int	i;
+	int	j;
+	int	l;
+	int	s;
+
+	i = 0;
+	l = ft_atoi(data->mesh[0][0]);
+	s = ft_atoi(data->mesh[0][0]);
+	while (i < data->m_y)
+	{
+		j = 0;
+		while (data->mesh[i][j] != NULL)
+		{
+			s = (s > ft_atoi(data->mesh[i][j])) ? ft_atoi(data->mesh[i][j]) : s;
+			l = (l < ft_atoi(data->mesh[i][j])) ? ft_atoi(data->mesh[i][j]) : l;
+			j++;
+		}
+		i++;
+	}
+	data->m_x = j;
+	data->m_max_z = l;
+	data->m_min_z = s;
+//	data->w_x = data->m_x * cos(M_PI / 6) + data->m_y * cos(M_PI / 6);
+//	data->w_y = l - s + sqrt(pow(j, 2) + pow(data->m_y, 2)) *
+//			sin(atan(data->m_y / j) + M_PI / 6);
+	data->w_x = 10 * data->m_x;
+	data->w_y = 10 * data->m_y;
+}
+
+int			main(int argc, char **argv)
 {
 	int		fd;
 	char	*line;
@@ -66,20 +97,25 @@ int	main(int argc, char **argv)
 	int		i;
 
 	if (argc != 2)
-		ERROR;
+		ERR_USE;
 	i = 0;
+	if ((fd = open(argv[1], O_DIRECTORY)) != -1)
+		ERR_DIR;
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
-		ERROR;
+		ERR_FFILE;
 	while (get_next_line(fd, &line))
 	{
-		data.info[i] = ft_strsplit(line, ' ');
+		data.mesh[i] = ft_strsplit(line, ' ');
 		free(line);
 		i++;
 	}
 	free(line);
 	close(fd);
-	val_mesh(data.info, i);
-	graphic_main(data.info, i);	
-	free_mesh(data.info, i);	
+	val_mesh(data.mesh, i);
+	data.file = ft_strdup(argv[1]);
+	data.m_y = i;
+	fill_data(&data);
+	graphic_main(data);	
+	free_mesh(data.mesh, i);	
 	return (0);
 }
