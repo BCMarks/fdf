@@ -4,7 +4,7 @@ FLAGS			= -Wall -Werror -Wextra
 SRC_DIR 		= ./srcs/
 INCLUDES 		= -I./libft/includes -I./includes -I./minilibx_macos
 LIBRARIES		= -L libft/ -lft -L minilibx_macos/ -lmlx -framework OpenGL -framework AppKit -g
-SRCS			= $(SRC_DIR)main.c $(SRC_DIR)graphic_main.c
+SRCS			= $(SRC_DIR)main.c $(SRC_DIR)graphic_main.c $(SRC_DIR)display.c
 OBJS			= $(SRCS:.c=.o)
 
 all:		$(NAME)

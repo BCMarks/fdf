@@ -6,7 +6,7 @@
 /*   By: bmarks <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 15:42:59 by bmarks            #+#    #+#             */
-/*   Updated: 2019/09/13 14:58:53 by bmarks           ###   ########.fr       */
+/*   Updated: 2019/09/14 12:11:20 by bmarks           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,12 @@ static void	fill_data(t_data *data)
 	data->m_x = j;
 	data->m_max_z = l;
 	data->m_min_z = s;
-//	data->w_x = data->m_x * cos(M_PI / 6) + data->m_y * cos(M_PI / 6);
-//	data->w_y = l - s + sqrt(pow(j, 2) + pow(data->m_y, 2)) *
-//			sin(atan(data->m_y / j) + M_PI / 6);
-	data->w_x = 10 * data->m_x;
-	data->w_y = 10 * data->m_y;
+	data->w_x = 8 * (data->m_x * cos(M_PI / 6) + data->m_y * cos(M_PI / 6));
+	data->w_y = 8 * (l - s + sqrt(pow(j, 2) + pow(data->m_y, 2)) *
+			sin(atan(data->m_y / j) + M_PI / 6));
+	data->x_offset = (data->w_x - 8 * data->m_x) / 2;
+	data->y_offset = (data->w_y - 8 * data->m_y) / 2;
+	data->mode = 0;
 }
 
 int			main(int argc, char **argv)

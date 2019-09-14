@@ -6,7 +6,7 @@
 /*   By: bmarks <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/10 15:43:16 by bmarks            #+#    #+#             */
-/*   Updated: 2019/09/13 11:57:25 by bmarks           ###   ########.fr       */
+/*   Updated: 2019/09/14 13:30:20 by bmarks           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,15 @@ typedef struct			s_data
 	int					m_min_z;
 	int					w_x;
 	int					w_y;
+	int					x_offset;
+	int					y_offset;
+	int					mode;
 }						t_data;
 
 void	graphic_main(t_data);
+void	grey_win(void *p[], t_data data);
+int		col_pick(t_data data, int i, int j);
+void	disp_mesh_2d(void *p[], t_data data);
+void	disp_mesh_3d(void *p[], t_data data);
+
 #endif
